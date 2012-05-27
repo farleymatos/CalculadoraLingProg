@@ -1,2 +1,16 @@
-Oi, genteeeeee!!!!!!!
+Programa para simular uma calculadora em linha de comando.
+	-Linguagem C++
+	-Modularizada
+	-Compartilhada pelo GitHub
 
+
+O usuário deve entrar com uma em uma das seguintes formas:
+	<variável> := <expressão>;
+	expressão;
+
+Professor: Leonardo Nunes
+Alunos: Bruno Saraiva
+	Farley Matos
+	Laura Panzariello
+	Stephanie Cançado
+	Timon Asch
