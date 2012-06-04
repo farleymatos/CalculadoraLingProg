@@ -11,7 +11,9 @@
           Laura Panzariello
           Stephanie Cancado
           Timon  Asch
-          
+   
+   mod_cal.h
+            Header com as definições da funções criadas.       
 */
 
 # ifndef MOD_CAL
@@ -27,8 +29,8 @@
 using namespace std;
 
 int parse(string expr);
-int parse_tree(char **token, char *token_type, int token_count);
-int eval1(char **token, char *token_type, int token_count);
+void parse_tree(char **token, char *token_type, int token_count);
+void eval1(char **token, char *token_type, int token_count);
 double eval2(char **token, char *token_type, int token_count);
 double eval3(char **token, char *token_type, int token_count);
 double eval4(char **token, char *token_type, int token_count);
