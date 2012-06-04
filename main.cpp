@@ -13,6 +13,7 @@
           Timon  Asch
           
   Modulo Principal - Interface com o Usuário
+         Faz a comunicação inicial com o usuário e mantém um loop para inserção de expressões a serem calculadas.
 */
 
 
@@ -43,7 +44,7 @@ INICIO:
         	{               
         		printf("> ");
         		cin >> expr;
-        		if (expr == "sair") break;
+        		if (expr == "sair") break;  //sair do loop
         		else parse(expr);
         		
         		for(int i=0;i<100000;i++); // Para lerdar o computador. Porque eh rapido demais.
@@ -53,8 +54,8 @@ INICIO:
         }
         catch (int e)
         {
-             goto INICIO;
+             goto INICIO;  //se der algun erro, voltar pro inicio
         }
 
-	return 1;
+	return 1;  //soh pra sair do programa
 }
