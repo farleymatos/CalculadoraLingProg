@@ -1,0 +1,175 @@
+															**
+  TRABALHO DE LINGUAGENS DE PROGRAMAÇÃO											**
+  Calculadora em linha de comando 											**
+              -Linguagem C++												**
+              -Modularizada												**
+              -Compartilhada pelo GitHub										**
+  															**
+  Professor: Leonardo Nunes												**
+  Alunos: Bruno saraiva													**
+          Farley Matos													**
+          Laura Panzariello												**
+          Stephanie Cancado												**
+          Timon Asch													**
+          														**
+  Relatório com explicações sobre os módulos criados.									**
+															**
+**************************************************************************************************************************
+
+
+Arquivo "mod_cal.h":
+	Arquivo header com o prototipo de todas as funções criadas para a Calculadora.
+
+
+
+************************************************
+
+
+
+Módulo "main":
+	Faz a comunicação inicial com o usuário e mantém um loop para inserção de expressões a serem calculadas.
+
+ Includes:
+	cstdio.h : biblioteca de funções de entrada/saída
+	iostream.h : biblioteca orientada a objetos que fornece funções de entrada/saída usando streams
+	cstdlib.h : biblioteca padrão, com utilidades gerais
+	string.h : biblioteca com funções de manipulação de strings
+	ctype.h : biblioteca com funções de manipulação de tipo char
+	mod_cal.h : arquivo header com o prototipo de todas as funções criadas para a Calculadora
+
+ Variáveis:
+	string expr : expressão inserida pelo usuário
+	int i : variável auxiliar para deixar o sistema um pouco mais lento, pois é rápido de mais 
+
+
+
+************************************************
+
+
+
+Módulo "Parse":
+	Separa a expressão inserida pelo usuário em tokens, para passá-los pela parse-tree.
+
+
+ Includes: mod_cal.h
+	Arquivo header com o prototipo de todas as funções criadas para a Calculadora.
+
+ Funções: 
+	int parse(string expr)
+	   Recebe a expressão inserida pelo usuário e retorna sempre 1. Erros são informados através de "cout" dentro da própria função.
+
+   Variáveis:
+	char *expr_c : string com a expressão inserida pelo usuário. A variável expr será convertida para string c e armazenada em expr_c.
+
+	char **token : "vetor de tokens"
+	char *token_type : "vetor com os tipos dos tokens"
+	int token_count : contador de tokens
+
+	char *buffer : armazenador temporário de token
+	char tipo_buffer : guarda o tipo do token armazenado no buffer
+
+	int i : auxiliar de iteração
+
+
+   Funcionamento:
+	A função parse separa a expressão inserida em tokens, delimitando-os através de espaços, sinais e parênteses. Sempre que um número ou literal é encontrado ele é armazenado do buffer, e os caracteres seguintes vão sendo concatenados a ele até que se encontre um caracter espaço, sinal ou parênteses. Encontrado algun desses, o buffer é armazenado no "vetor de tokens", e seu tipo no "vetor de tipos de tokens". Após isso resetamos o buffer para NULL, para que outro token seja procurado.
+	No fim da separação em tokens a função chama a parse-tree.
+
+
+
+************************************************
+
+
+
+Módulo "Parse-Tree":
+	Contém as regras para a derivação da parse-tree da Calculadora, bem como funções de manipulação de variáveis.
+
+
+ Includes: mod_cal.h
+	Arquivo header com o prototipo de todas as funções criadas para a Calculadora.
+
+ Variáveis globais:
+	int indice : variavel para setar onde o token que inicia a parte da expressão que será calculada
+	int inicio : variavel para setar o inicio de uma EXPR_LIST
+	int count_variaveis : contador de variáveis no "vetor de variáveis"
+	char **variaveis : "vetor de variáveis"
+	double *valor_variaveis : "vetor de valores das variáveis"
+
+
+ Funções:
+	void parse_tree(char **token, char *token_type, int token_count)
+	   Recebe o "vetor de tokens", o "vetor de tipos dos tokens" e o numero de tokens da expressão, que vêm da função parse.
+	   Retorna nada.
+	   Chama a função eval1, que inicia a derivação da árvore propriamente dita.
+	___________________
+
+	void eval1(char **token, char *token_type, int token_count)
+	   Recebe o "vetor de tokens", o "vetor de tipos dos tokens" e o numero de tokens da expressão, enviados pela função parse_tree.
+	   Responsável pela derivação de LISTAS DE EXPRESSÕES em ATRIBUIÇÕES ou LISTA DE EXPRESSÕES(recursão). Também verifica a presençado ';' nas expressões.
+	   Chama a função eval2, para prosseguir com a derivação; ou ela mesma.
+	   Imprime a resposta na tela.
+	   Retorna nada.
+
+	  Variáveis:
+		double resposta : resposta para ser impressa na tela. É o retorno da função eval2.
+	___________________
+
+	double eval2(char **token, char *token_type, int token_count)
+	   Recebe o "vetor de tokens", o "vetor de tipos dos tokens" e o numero de tokens da expressão, enviados pela função eval1.
+	   Responsável pela derivação de ATRIBUIÇÕES em EXPRESSÕES e VARIÁVEIS.
+	   Chama a função eval3, para prosseguir com a derivação; ou ela mesma, para calcular outra expressão.
+	   Retorna o valor da expressão para o eval1 escrever na tela.
+	   Chama a função atualiza_variavel para atualizar o "o vetor de variaveis" com o valor calculado para a uma variavel.
+
+	  Variáveis:
+		double saida : resultado da expressão.
+	___________________
+
+	double eval3(char **token, char *token_type, int token_count)
+	   Recebe o "vetor de tokens", o "vetor de tipos dos tokens" e o numero de tokens da expressão, enviados pela função eval2.
+	   Responsável pela derivação de EXPRESSÕES em operações entre TERMOS e outras EXPRESSÕES.
+	   Chama a função eval4, para prosseguir com a derivação; ou ela mesma, para calcular outra expressão.
+	   Retorna o valor da expressão para o eval2 atribuir à variável, se for usada uma variável.
+	   Realiza adições e subtrações entre termos e expressões.
+
+	  Variáveis:
+		double saida : resultado da expressão.
+		char *cur_token : ponteiro para armazenar um token temporariamente, para comparações na função.
+	___________________
+
+	double eval4(char **token, char *token_type, int token_count)
+	   Recebe o "vetor de tokens", o "vetor de tipos dos tokens" e o numero de tokens da expressão, enviados pela função eval3.
+	   Responsável pela derivação de TERMOS em operações entre PRIMÁRIOS e outros TERMOS.
+	   Chama a função eval5, para prosseguir com a derivação; ou ela mesma, para calcular outro termo.
+	   Retorna o valor do termo para a eval3 usar no calculo da expressão.
+	   Realiza multiplicações e divisões entre primários e termos.
+	
+	  Variável:
+		double saida : resultado do termo.
+		char *cur_token : ponteiro para armazenar um token temporariamente, para comparações na função.
+	___________________
+
+	double eval5(char **token, char *token_type, int token_count)
+	   Recebe o "vetor de tokens", o "vetor de tipos dos tokens" e o numero de tokens da expressão, enviados pela função eval4.
+	   Responsável pela derivação de PRIMÁRIOS em NÚMEROS, VARIÁVEIS e EXPRESSÕES COM PRECEDÊNCIA (entre parênteses).
+	   Chama a função eval3, caso haja uma expressão entre parênteses.
+	   Retorna o valor do primário para a eval4 usar no calculo do termo.
+	   Realiza conversões dos números presentes na expressão, que estão como char, para double. Também busca valores de variáveis no "vetor de variáveis", chamando a função buscar_variavel.
+
+	  Variáveis:
+		double saida : resultado da expressão entre parênteses.
+		char *cur_token : ponteiro para armazenar um token temporariamente, para comparações na função.
+	___________________
+
+	double busca_variavel(char *variavel)
+	   Recebe o nome da variável a ser buscada.
+	   Busca a variável no "vetor de variáveis", retornando seu valor, caso seja encontrada; senão, retornao valor 0 (zero).
+	  
+	  Variáveis:
+		int i : auxiliar para iteração.
+		double saida : valor da variável pesquisada.
+	___________________
+
+	double atualiza_variavel(char *variavel,double valor)
+	   Recebe o nome da variável a ser atualizada e o seu valor. Se a variável existe, sobrescreve-se o valor, senão, inclui-se a variável nova no fim do vetor.
+	   Retorna o valor da variável atualizada para ser usado por quem a chama.
